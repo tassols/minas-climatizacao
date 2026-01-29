@@ -18,10 +18,6 @@ function getEquipeById(id) {
   return getEquipes().find((e) => e.id === id) || null;
 }
 
-function pontosDia(instalacoes, limpezas) {
-  return (instalacoes || 0) * 3 + (limpezas || 0) * 1;
-}
-
 function uniqueTecnicos() {
   const eq = getEquipes();
   const names = new Set(eq.map((e) => e.tecnico).filter(Boolean));
@@ -100,12 +96,14 @@ document.getElementById('form-producao').addEventListener('submit', (e) => {
   const equipeId = document.getElementById('prod-equipe').value;
   const instalacoes = parseInt(document.getElementById('prod-instalacoes').value, 10) || 0;
   const limpezas = parseInt(document.getElementById('prod-limpezas').value, 10) || 0;
-  const pontos = pontosDia(instalacoes, limpezas);
+  const checklists = parseInt(document.getElementById('prod-checklists').value, 10) || 0;
+  const pontos = pontosDia(instalacoes, limpezas, checklists);
   const arr = getProducao();
-  arr.push({ id: genId(), data, equipeId, instalacoes, limpezas, pontos });
+  arr.push({ id: genId(), data, equipeId, instalacoes, limpezas, checklists, pontos });
   setProducao(arr);
   document.getElementById('prod-instalacoes').value = 0;
   document.getElementById('prod-limpezas').value = 0;
+  document.getElementById('prod-checklists').value = 0;
   updatePreviewPontos();
   renderListas();
 });
@@ -113,11 +111,13 @@ document.getElementById('form-producao').addEventListener('submit', (e) => {
 function updatePreviewPontos() {
   const i = parseInt(document.getElementById('prod-instalacoes').value, 10) || 0;
   const l = parseInt(document.getElementById('prod-limpezas').value, 10) || 0;
-  document.getElementById('preview-pontos').textContent = pontosDia(i, l);
+  const c = parseInt(document.getElementById('prod-checklists').value, 10) || 0;
+  document.getElementById('preview-pontos').textContent = pontosDia(i, l, c);
 }
 
 document.getElementById('prod-instalacoes').addEventListener('input', updatePreviewPontos);
 document.getElementById('prod-limpezas').addEventListener('input', updatePreviewPontos);
+document.getElementById('prod-checklists').addEventListener('input', updatePreviewPontos);
 
 let filtroProdMes = null;
 
@@ -139,13 +139,14 @@ function renderListaProducao() {
   }
   arr = arr.slice().sort((a, b) => b.data.localeCompare(a.data));
   const byCar = (id) => eq.find((e) => e.id === id)?.carro || id;
-  ul.innerHTML = arr.length === 0 ? '<li class="empty">Nenhum registro.</li>' : arr.slice(0, 80).map((p) => `
-    <li>
-      <span>${p.data} · ${byCar(p.equipeId)} · ${p.instalacoes} inst. + ${p.limpezas} limpezas</span>
+  ul.innerHTML = arr.length === 0 ? '<li class="empty">Nenhum registro.</li>' : arr.slice(0, 80).map((p) => {
+    const ch = p.checklists != null ? ` · ${p.checklists} checklists` : '';
+    return `<li>
+      <span>${p.data} · ${byCar(p.equipeId)} · ${p.instalacoes} inst. + ${p.limpezas} limpezas${ch}</span>
       <span class="badge">${p.pontos} pts</span>
       <button type="button" class="btn-remove" data-prod-id="${p.id}">Remover</button>
-    </li>
-  `).join('');
+    </li>`;
+  }).join('');
   ul.querySelectorAll('.btn-remove').forEach((b) => {
     b.addEventListener('click', () => {
       const id = b.getAttribute('data-prod-id');
@@ -162,17 +163,13 @@ document.getElementById('form-qualidade').addEventListener('submit', (e) => {
   const [ano, mes] = mesAno.split('-').map(Number);
   const equipeId = document.getElementById('qual-equipe').value;
   const retornoA = document.getElementById('qual-retorno-a').checked;
-  const checklist = document.getElementById('qual-checklist').checked;
-  const fotos = document.getElementById('qual-fotos').checked;
   const arr = getQualidade();
   const idx = arr.findIndex((q) => String(q.ano) === String(ano) && String(q.mes) === String(mes) && q.equipeId === equipeId);
-  const row = { mes: Number(mes), ano: Number(ano), equipeId, retornoA, checklist, fotos };
+  const row = { mes: Number(mes), ano: Number(ano), equipeId, retornoA };
   if (idx >= 0) arr[idx] = row;
   else arr.push(row);
   setQualidade(arr);
   document.getElementById('qual-retorno-a').checked = false;
-  document.getElementById('qual-checklist').checked = false;
-  document.getElementById('qual-fotos').checked = false;
   renderListas();
 });
 
@@ -184,7 +181,7 @@ function renderListaQualidade() {
   ul.innerHTML = arr.length === 0 ? '<li class="empty">Nenhum registro.</li>' : arr.map((q) => `
     <li>
       <span>${String(q.mes).padStart(2, '0')}/${q.ano} · ${byCar(q.equipeId)}</span>
-      <span class="badge">A: ${q.retornoA ? 'Sim' : 'Não'} · Check: ${q.checklist ? 'Sim' : 'Não'} · Fotos: ${q.fotos ? 'Sim' : 'Não'}</span>
+      <span class="badge">Retorno Tipo A: ${q.retornoA ? 'Sim' : 'Não'}</span>
     </li>
   `).join('');
 }
