@@ -112,7 +112,16 @@ function updatePreviewPontos() {
   const i = parseInt(document.getElementById('prod-instalacoes').value, 10) || 0;
   const l = parseInt(document.getElementById('prod-limpezas').value, 10) || 0;
   const c = parseInt(document.getElementById('prod-checklists').value, 10) || 0;
-  document.getElementById('preview-pontos').textContent = pontosDia(i, l, c);
+  const esperados = i + l;
+  const falta = Math.max(0, esperados - c);
+  const pts = pontosDia(i, l, c);
+  const el = document.getElementById('preview-pontos');
+  const pen = document.getElementById('preview-checklist-penalty');
+  if (el) el.textContent = pts;
+  if (pen) {
+    pen.textContent = falta > 0 ? ` (−${falta} pts: ${falta} checklist${falta > 1 ? 's' : ''} faltando)` : '';
+    pen.className = 'pontos-penalty' + (falta > 0 ? ' has-penalty' : '');
+  }
 }
 
 document.getElementById('prod-instalacoes').addEventListener('input', updatePreviewPontos);
