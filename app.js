@@ -182,8 +182,19 @@ function renderListaQualidade() {
     <li>
       <span>${String(q.mes).padStart(2, '0')}/${q.ano} · ${byCar(q.equipeId)}</span>
       <span class="badge">Retorno Tipo A: ${q.retornoA ? 'Sim' : 'Não'}</span>
+      <button type="button" class="btn-remove" data-qual-mes="${q.mes}" data-qual-ano="${q.ano}" data-qual-equipe="${q.equipeId}">Remover</button>
     </li>
   `).join('');
+  ul.querySelectorAll('.btn-remove').forEach((b) => {
+    b.addEventListener('click', () => {
+      const mes = Number(b.getAttribute('data-qual-mes'));
+      const ano = Number(b.getAttribute('data-qual-ano'));
+      const equipeId = b.getAttribute('data-qual-equipe');
+      const rest = getQualidade().filter((q) => q.mes !== mes || q.ano !== ano || q.equipeId !== equipeId);
+      setQualidade(rest);
+      renderListas();
+    });
+  });
 }
 
 /* ---------- PMOC ---------- */
