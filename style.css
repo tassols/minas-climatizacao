@@ -228,6 +228,15 @@ body {
   color: var(--accent);
 }
 
+.pontos-penalty {
+  font-size: 0.9em;
+  color: var(--text-muted);
+}
+
+.pontos-penalty.has-penalty {
+  color: var(--danger);
+}
+
 /* Buttons */
 .btn {
   padding: 0.5rem 1.25rem;
