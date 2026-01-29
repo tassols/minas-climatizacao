@@ -55,7 +55,7 @@
 
       <section id="producao" class="panel">
         <h2>Produção diária</h2>
-        <p class="hint">Instalação = 3 pts · Limpeza química = 1 pt.</p>
+        <p class="hint">Instalação = 3 pts · Limpeza = 1 pt · Checklist (c/ fotos) obrigatório por serviço; não fazer = −1 pt cada.</p>
         <form id="form-producao" class="card form-card">
           <div class="row">
             <label>
@@ -67,12 +67,16 @@
               <select id="prod-equipe" required></select>
             </label>
             <label>
-              <span>Instalações padrão</span>
+              <span>Instalações</span>
               <input type="number" id="prod-instalacoes" min="0" value="0">
             </label>
             <label>
-              <span>Limpezas químicas</span>
+              <span>Limpezas</span>
               <input type="number" id="prod-limpezas" min="0" value="0">
+            </label>
+            <label>
+              <span>Checklists feitos</span>
+              <input type="number" id="prod-checklists" min="0" value="0" title="Checklist com evidência fotográfica por serviço">
             </label>
           </div>
           <p class="pontos-preview">Pontos do dia: <strong id="preview-pontos">0</strong></p>
@@ -93,7 +97,7 @@
 
       <section id="qualidade" class="panel">
         <h2>Regras de qualidade</h2>
-        <p class="hint">Retorno Tipo A, checklist ou fotos em falta → perda do bônus operacional.</p>
+        <p class="hint">Apenas retorno Tipo A. Se houver retorno → perda do bônus operacional do mês.</p>
         <form id="form-qualidade" class="card form-card">
           <div class="row">
             <label>
@@ -109,14 +113,6 @@
             <label class="check">
               <input type="checkbox" id="qual-retorno-a" value="1">
               <span>Teve retorno Tipo A (erro técnico)</span>
-            </label>
-            <label class="check">
-              <input type="checkbox" id="qual-checklist">
-              <span>Checklist preenchido</span>
-            </label>
-            <label class="check">
-              <input type="checkbox" id="qual-fotos">
-              <span>Evidências fotográficas</span>
             </label>
           </div>
           <button type="submit" class="btn btn-primary">Salvar qualidade</button>
