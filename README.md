@@ -5,7 +5,7 @@ Sistema interno para gestão de metas, pontos e bônus por carro/equipe: produç
 ## Funcionalidades
 
 - **Equipes**: cadastro de carros (técnico + auxiliar).
-- **Produção**: registro diário (instalação = 3 pts, limpeza = 1 pt). Checklist (c/ fotos) obrigatório por serviço; não fazer = −1 pt cada. Campos: instalações, limpezas, checklists feitos.
+- **Produção**: registro diário (instalação = 3 pts, limpeza = 1 pt). Checklist (c/ fotos) só em **instalações (visitas)**; limpeza não tem. 1 por visita; não fazer = −1 pt cada. Campos: instalações, limpezas, checklists feitos.
 - **Qualidade**: apenas retorno Tipo A por carro/mês (retorno → perda do bônus operacional).
 - **PMOC**: contratos ativos por técnico (R$ 40/mês) e registro de falha técnica.
 - **Resultados**: página separada para exibir na TV, com atualização automática a cada 2 minutos.
@@ -127,7 +127,7 @@ minas-metas/
 - Bônus operacional: 60% técnico, 40% auxiliar.
 - Bônus qualidade: R$ 200 (zero retorno Tipo A).
 - Bônus eficiência: R$ 200 (média ≥ 9 pts/dia).
-- Checklist (com evidência fotográfica) em Produção: 1 por instalação+limpeza; cada um não feito = −1 pt.
+- Checklist (com evidência fotográfica) em Produção: só para **instalações (visitas)**; 1 por visita. Limpeza não tem. Cada um não feito = −1 pt.
 - PMOC: R$ 40/mês por contrato ativo; falha técnica remove o bônus PMOC do mês.
 
 ---
