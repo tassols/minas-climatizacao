@@ -27,7 +27,7 @@ function pontosDia(instalacoes, limpezas, checklists) {
   const i = instalacoes || 0;
   const l = limpezas || 0;
   const base = i * 3 + l * 1;
-  const esperados = i + l;
+  const esperados = i; /* só instalação (visita) tem checklist; limpeza não */
   const c = checklists != null && checklists !== '' ? Number(checklists) : esperados;
   const falta = Math.max(0, esperados - c);
   return Math.max(0, base - falta);
