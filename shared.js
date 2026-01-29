@@ -23,8 +23,14 @@ function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
-function pontosDia(instalacoes, limpezas) {
-  return (instalacoes || 0) * 3 + (limpezas || 0) * 1;
+function pontosDia(instalacoes, limpezas, checklists) {
+  const i = instalacoes || 0;
+  const l = limpezas || 0;
+  const base = i * 3 + l * 1;
+  const esperados = i + l;
+  const c = checklists != null && checklists !== '' ? Number(checklists) : esperados;
+  const falta = Math.max(0, esperados - c);
+  return Math.max(0, base - falta);
 }
 
 function nivelFromPontos(total) {
@@ -81,21 +87,13 @@ function calcResultados(mesAno, getEquipes, getProducao, getQualidade, getPmoc, 
 
     let perdeBonusOp = false;
     let motivoPerda = null;
-    if (q) {
-      if (q.retornoA) {
-        perdeBonusOp = true;
-        motivoPerda = 'Retorno Tipo A';
-      } else if (!q.checklist || !q.fotos) {
-        perdeBonusOp = true;
-        motivoPerda = !q.checklist && !q.fotos ? 'Checklist e fotos ausentes' : !q.checklist ? 'Checklist ausente' : 'Fotos ausentes';
-      }
-    } else if (totalPontos > 0) {
+    if (q && q.retornoA) {
       perdeBonusOp = true;
-      motivoPerda = 'Qualidade não registrada';
+      motivoPerda = 'Retorno Tipo A';
     }
 
     const bonusOperacional = perdeBonusOp ? 0 : bonusOp;
-    const bonusQualidade = q && !q.retornoA ? BONUS.QUALIDADE : 0;
+    const bonusQualidade = (q && !q.retornoA) ? BONUS.QUALIDADE : 0;
     const bonusEficiencia = mediaDia >= 9 ? BONUS.EFICIENCIA : 0;
     const valorTecnico = bonusOperacional * 0.6;
     const valorAux = bonusOperacional * 0.4;
