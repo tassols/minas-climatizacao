@@ -31,9 +31,20 @@
     );
     const mesLabel = String(mes).padStart(2, '0') + '/' + ano;
 
+    const prod = getProducao();
+    const prodMes = prod.filter((p) => {
+      const [py, pm] = p.data.split('-').map(Number);
+      return py === ano && pm === mes;
+    });
+    const totalInstalacoes = prodMes.reduce((s, p) => s + (p.instalacoes || 0), 0);
+    const totalLimpezas = prodMes.reduce((s, p) => s + (p.limpezas || 0), 0);
+    const totalManutencaoCorretiva = prodMes.reduce((s, p) => s + (p.manutencaoCorretiva || 0), 0);
+    const totalInfraestrutura = prodMes.reduce((s, p) => s + (p.infraestrutura || 0), 0);
+
     let html = '';
 
     html += '<div class="tv-section"><h2>Resultados ' + mesLabel + '</h2>';
+    html += '<p class="tv-totais-categoria"><strong>' + totalInstalacoes + '</strong> instalações · <strong>' + totalLimpezas + '</strong> limpezas · <strong>' + totalManutencaoCorretiva + '</strong> man. corretiva · <strong>' + totalInfraestrutura + '</strong> infraestrutura</p>';
     html += '<div class="tv-grid">';
 
     for (const c of carros) {
