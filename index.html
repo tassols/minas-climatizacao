@@ -55,7 +55,7 @@
 
       <section id="producao" class="panel">
         <h2>Produção diária</h2>
-        <p class="hint">Instalação = 3 pts · Limpeza = 1 pt. Só instalação (visita) tem checklist (c/ fotos); limpeza não. 1 checklist por visita. Se fizer menos, perde 1 ponto por cada um que faltou.</p>
+        <p class="hint">Instalação = 3 pts · Limpeza = 1 pt · Manutenção corretiva = 1 pt · Infraestrutura = 2 pts. Só instalação (visita) tem checklist (c/ fotos). 1 checklist por visita. Se fizer menos, perde 1 ponto por cada um que faltou.</p>
         <form id="form-producao" class="card form-card">
           <div class="row">
             <label>
@@ -73,6 +73,14 @@
             <label>
               <span>Limpezas</span>
               <input type="number" id="prod-limpezas" min="0" value="0">
+            </label>
+            <label>
+              <span>Manutenção corretiva</span>
+              <input type="number" id="prod-manutencao-corretiva" min="0" value="0" title="1 pt cada">
+            </label>
+            <label>
+              <span>Infraestrutura</span>
+              <input type="number" id="prod-infraestrutura" min="0" value="0" title="2 pts cada">
             </label>
             <label>
               <span>Checklists feitos</span>
