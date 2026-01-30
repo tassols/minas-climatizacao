@@ -96,13 +96,17 @@ document.getElementById('form-producao').addEventListener('submit', (e) => {
   const equipeId = document.getElementById('prod-equipe').value;
   const instalacoes = parseInt(document.getElementById('prod-instalacoes').value, 10) || 0;
   const limpezas = parseInt(document.getElementById('prod-limpezas').value, 10) || 0;
+  const manutencaoCorretiva = parseInt(document.getElementById('prod-manutencao-corretiva').value, 10) || 0;
+  const infraestrutura = parseInt(document.getElementById('prod-infraestrutura').value, 10) || 0;
   const checklists = parseInt(document.getElementById('prod-checklists').value, 10) || 0;
-  const pontos = pontosDia(instalacoes, limpezas, checklists);
+  const pontos = pontosDia(instalacoes, limpezas, checklists, manutencaoCorretiva, infraestrutura);
   const arr = getProducao();
-  arr.push({ id: genId(), data, equipeId, instalacoes, limpezas, checklists, pontos });
+  arr.push({ id: genId(), data, equipeId, instalacoes, limpezas, manutencaoCorretiva, infraestrutura, checklists, pontos });
   setProducao(arr);
   document.getElementById('prod-instalacoes').value = 0;
   document.getElementById('prod-limpezas').value = 0;
+  document.getElementById('prod-manutencao-corretiva').value = 0;
+  document.getElementById('prod-infraestrutura').value = 0;
   document.getElementById('prod-checklists').value = 0;
   updatePreviewPontos();
   renderListas();
@@ -111,10 +115,12 @@ document.getElementById('form-producao').addEventListener('submit', (e) => {
 function updatePreviewPontos() {
   const i = parseInt(document.getElementById('prod-instalacoes').value, 10) || 0;
   const l = parseInt(document.getElementById('prod-limpezas').value, 10) || 0;
+  const mc = parseInt(document.getElementById('prod-manutencao-corretiva').value, 10) || 0;
+  const inf = parseInt(document.getElementById('prod-infraestrutura').value, 10) || 0;
   const c = parseInt(document.getElementById('prod-checklists').value, 10) || 0;
   const esperados = i; /* só instalações (visitas); limpeza não tem checklist */
   const falta = Math.max(0, esperados - c);
-  const pts = pontosDia(i, l, c);
+  const pts = pontosDia(i, l, c, mc, inf);
   const el = document.getElementById('preview-pontos');
   const pen = document.getElementById('preview-checklist-penalty');
   if (el) el.textContent = pts;
@@ -126,6 +132,8 @@ function updatePreviewPontos() {
 
 document.getElementById('prod-instalacoes').addEventListener('input', updatePreviewPontos);
 document.getElementById('prod-limpezas').addEventListener('input', updatePreviewPontos);
+document.getElementById('prod-manutencao-corretiva').addEventListener('input', updatePreviewPontos);
+document.getElementById('prod-infraestrutura').addEventListener('input', updatePreviewPontos);
 document.getElementById('prod-checklists').addEventListener('input', updatePreviewPontos);
 
 let filtroProdMes = null;
@@ -150,8 +158,10 @@ function renderListaProducao() {
   const byCar = (id) => eq.find((e) => e.id === id)?.carro || id;
   ul.innerHTML = arr.length === 0 ? '<li class="empty">Nenhum registro.</li>' : arr.slice(0, 80).map((p) => {
     const ch = p.checklists != null ? ` · ${p.checklists} checklists` : '';
+    const mc = (p.manutencaoCorretiva || 0) > 0 ? ` · ${p.manutencaoCorretiva} man. corr.` : '';
+    const inf = (p.infraestrutura || 0) > 0 ? ` · ${p.infraestrutura} infr.` : '';
     return `<li>
-      <span>${p.data} · ${byCar(p.equipeId)} · ${p.instalacoes} inst. + ${p.limpezas} limpezas${ch}</span>
+      <span>${p.data} · ${byCar(p.equipeId)} · ${p.instalacoes} inst. + ${p.limpezas} limpezas${mc}${inf}${ch}</span>
       <span class="badge">${p.pontos} pts</span>
       <button type="button" class="btn-remove" data-prod-id="${p.id}">Remover</button>
     </li>`;
