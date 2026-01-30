@@ -1,103 +1,42 @@
-/**
- * Página de Resultados (TV) — Minas Climatização
- */
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resultados — Minas Climatização</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-tv.css">
+</head>
+<body class="tv">
+  <div class="tv-app">
+    <header class="tv-header">
+      <img src="logo.png" alt="Minas Climatização" class="tv-logo">
+      <h1 class="tv-title">Resultados — Metas, Pontos e Bônus</h1>
+      <div class="tv-controls">
+        <label>
+          <span>Mês/Ano</span>
+          <input type="month" id="tv-mes">
+        </label>
+      </div>
+    </header>
 
-(function () {
-  const main = document.getElementById('tv-main');
-  const inputMes = document.getElementById('tv-mes');
-  const elUpdated = document.getElementById('tv-updated');
+    <main class="tv-main" id="tv-main">
+      <p class="tv-loading">Carregando…</p>
+    </main>
 
-  function mesDefault() {
-    const n = new Date();
-    return n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0');
-  }
-
-  function formatMoney(v) {
-    return 'R$ ' + Number(v).toFixed(2).replace('.', ',');
-  }
-
-  function render() {
-    const mesAno = inputMes.value || mesDefault();
-    inputMes.value = mesAno;
-
-    const getEquipes = () => window.db.getEquipes();
-    const getProducao = () => window.db.getProducao();
-    const getQualidade = () => window.db.getQualidade();
-    const getPmoc = () => window.db.getPmoc();
-    const getPmocFalhas = () => window.db.getPmocFalhas();
-
-    const { ano, mes, carros, tecnicos } = calcResultados(
-      mesAno, getEquipes, getProducao, getQualidade, getPmoc, getPmocFalhas
-    );
-    const mesLabel = String(mes).padStart(2, '0') + '/' + ano;
-
-    const prod = getProducao();
-    const prodMes = prod.filter((p) => {
-      const [py, pm] = p.data.split('-').map(Number);
-      return py === ano && pm === mes;
-    });
-    const totalInstalacoes = prodMes.reduce((s, p) => s + (p.instalacoes || 0), 0);
-    const totalLimpezas = prodMes.reduce((s, p) => s + (p.limpezas || 0), 0);
-    const totalManutencaoCorretiva = prodMes.reduce((s, p) => s + (p.manutencaoCorretiva || 0), 0);
-    const totalInfraestrutura = prodMes.reduce((s, p) => s + (p.infraestrutura || 0), 0);
-
-    let html = '';
-
-    html += '<div class="tv-section"><h2>Resultados ' + mesLabel + '</h2>';
-    html += '<p class="tv-totais-categoria"><strong>' + totalInstalacoes + '</strong> instalações · <strong>' + totalLimpezas + '</strong> limpezas · <strong>' + totalManutencaoCorretiva + '</strong> man. corretiva · <strong>' + totalInfraestrutura + '</strong> infraestrutura</p>';
-    html += '<div class="tv-grid">';
-
-    for (const c of carros) {
-      const e = c.equipe;
-      const nc = 'n' + c.nivel;
-      html += '<div class="tv-card">';
-      html += '<p class="carro">' + e.carro + ' — ' + e.tecnico + ' / ' + e.auxiliar + '</p>';
-      html += '<p>Pontos: <strong>' + c.totalPontos + '</strong> (' + c.diasTrabalhados + ' dias) · Média: <strong>' + c.mediaDia.toFixed(1) + '</strong> pts/dia</p>';
-      html += '<p class="nivel ' + nc + '">Nível ' + c.nivel + '</p>';
-      if (c.perdeBonusOp && c.motivoPerda) {
-        html += '<p class="perda">Perda bônus: ' + c.motivoPerda + '</p>';
-      }
-      html += '<p class="bonus-line">Técnico: <span class="bonus-val">' + formatMoney(c.valorTecnico) + '</span> (op.)';
-      if (c.bonusQualidade) html += ' + ' + formatMoney(c.bonusQualidade) + ' (qual.)';
-      if (c.bonusEficiencia) html += ' + ' + formatMoney(c.bonusEficiencia) + ' (efíc.)';
-      html += '</p>';
-      html += '<p class="bonus-line">Auxiliar: <span class="bonus-val">' + formatMoney(c.valorAux) + '</span> (op.)</p>';
-      html += '</div>';
-    }
-
-    if (carros.length === 0) {
-      html += '<div class="tv-card"><p>Nenhuma equipe com produção no mês.</p></div>';
-    }
-
-    html += '</div></div>';
-
-    const pmocList = tecnicos.filter((t) => t.contratos > 0);
-    if (pmocList.length) {
-      html += '<div class="tv-section"><h2>Bônus PMOC ' + mesLabel + '</h2><ul class="tv-pmoc-list">';
-      for (const t of pmocList) {
-        const val = t.perde
-          ? '<span class="pmoc-falha">falha → R$ 0</span>'
-          : '<span class="pmoc-val">' + formatMoney(t.total) + '</span>';
-        html += '<li><span>' + t.tecnico + '</span> <span>' + t.contratos + ' contrato(s) ' + val + '</span></li>';
-      }
-      html += '</ul></div>';
-    }
-
-    main.innerHTML = html;
-    if (elUpdated) elUpdated.textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR');
-  }
-
-  async function init() {
-    main.innerHTML = '<p class="tv-loading">Carregando…</p>';
-    await window.db.load();
-    inputMes.value = mesDefault();
-    inputMes.addEventListener('change', render);
-    render();
-
-    setInterval(function () {
-      window.db.load().then(render);
-    }, 2 * 60 * 1000);
-  }
-
-  init();
-})();
+    <footer class="tv-footer">
+      <p>Minas Climatização · Documento interno</p>
+      <p id="tv-updated" class="tv-updated"></p>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>window.MINAS_SUPABASE = window.MINAS_SUPABASE || {};</script>
+  <script src="config.js"></script>
+  <script src="db.js"></script>
+  <script src="shared.js"></script>
+  <script src="resultados.js"></script>
+</body>
+</html>
