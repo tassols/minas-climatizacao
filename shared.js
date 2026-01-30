@@ -23,10 +23,12 @@ function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
-function pontosDia(instalacoes, limpezas, checklists) {
+function pontosDia(instalacoes, limpezas, checklists, manutencaoCorretiva, infraestrutura) {
   const i = instalacoes || 0;
   const l = limpezas || 0;
-  const base = i * 3 + l * 1;
+  const mc = manutencaoCorretiva || 0;
+  const inf = infraestrutura || 0;
+  const base = i * 3 + l * 1 + mc * 1 + inf * 2;
   const esperados = i; /* só instalação (visita) tem checklist; limpeza não */
   const c = checklists != null && checklists !== '' ? Number(checklists) : esperados;
   const falta = Math.max(0, esperados - c);
