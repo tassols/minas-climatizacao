@@ -94,7 +94,7 @@ A logo fica como `logo.png` na **raiz** do projeto. Pode usar `assets/logo.png` 
 
 - **URL**: `resultados.html` (no mesmo domínio do deploy, ex.: `https://...github.io/.../resultados.html`).
 - Use essa página na TV da empresa para todos acompanharem.
-- É possível trocar o mês/ano e voltar ao sistema pelo link **"Voltar ao sistema"**.
+- Na TV é possível apenas trocar o mês/ano; **não há link para o sistema admin**, para evitar que colaboradores façam alterações a partir da tela da TV.
 - A página recarrega os dados a cada 2 minutos.
 
 ## Estrutura dos arquivos
