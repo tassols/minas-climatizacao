@@ -116,6 +116,18 @@ body.tv {
   color: var(--text);
 }
 
+.tv-card .tv-servicos-equipe {
+  font-size: 0.95em;
+  color: var(--text-muted, #64748b);
+  margin: 0.35rem 0;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed var(--border, #e0e0e0);
+}
+
+.tv-card .tv-servicos-equipe strong {
+  color: var(--text);
+}
+
 .tv-card .nivel {
   font-family: var(--font-mono, monospace);
   font-weight: 600;
