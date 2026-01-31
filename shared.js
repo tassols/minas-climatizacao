@@ -60,9 +60,15 @@ function calcResultados(mesAno, getEquipes, getProducao, getQualidade, getPmoc, 
 
   const porEquipe = {};
   for (const p of prodMes) {
-    if (!porEquipe[p.equipeId]) porEquipe[p.equipeId] = { pontos: 0, dias: new Set() };
+    if (!porEquipe[p.equipeId]) {
+      porEquipe[p.equipeId] = { pontos: 0, dias: new Set(), instalacoes: 0, limpezas: 0, manutencaoCorretiva: 0, infraestrutura: 0 };
+    }
     porEquipe[p.equipeId].pontos += p.pontos;
     porEquipe[p.equipeId].dias.add(p.data);
+    porEquipe[p.equipeId].instalacoes += p.instalacoes || 0;
+    porEquipe[p.equipeId].limpezas += p.limpezas || 0;
+    porEquipe[p.equipeId].manutencaoCorretiva += p.manutencaoCorretiva || 0;
+    porEquipe[p.equipeId].infraestrutura += p.infraestrutura || 0;
   }
 
   const qualMes = qual.filter((q) => q.ano === ano && q.mes === mes);
@@ -74,8 +80,11 @@ function calcResultados(mesAno, getEquipes, getProducao, getQualidade, getPmoc, 
 
   const ativosPmoc = pmoc.filter((p) => p.ativo);
   const pmocPorTecnico = {};
+  const pmocContratosPorTecnico = {};
   for (const p of ativosPmoc) {
-    pmocPorTecnico[p.tecnico] = (pmocPorTecnico[p.tecnico] || 0) + 1;
+    const valor = Number(p.valorPorTecnico) || BONUS.PMOC;
+    pmocPorTecnico[p.tecnico] = (pmocPorTecnico[p.tecnico] || 0) + valor;
+    pmocContratosPorTecnico[p.tecnico] = (pmocContratosPorTecnico[p.tecnico] || 0) + 1;
   }
 
   const carros = [];
@@ -84,6 +93,10 @@ function calcResultados(mesAno, getEquipes, getProducao, getQualidade, getPmoc, 
     const totalPontos = d ? d.pontos : 0;
     const diasTrabalhados = d ? d.dias.size : 0;
     const mediaDia = diasTrabalhados ? totalPontos / diasTrabalhados : 0;
+    const totInstalacoes = d ? d.instalacoes : 0;
+    const totLimpezas = d ? d.limpezas : 0;
+    const totManutencaoCorretiva = d ? d.manutencaoCorretiva : 0;
+    const totInfraestrutura = d ? d.infraestrutura : 0;
     const { nivel, bonus: bonusOp } = nivelFromPontos(totalPontos);
     const q = qualByEquipe[e.id];
 
@@ -105,6 +118,10 @@ function calcResultados(mesAno, getEquipes, getProducao, getQualidade, getPmoc, 
       totalPontos,
       diasTrabalhados,
       mediaDia,
+      totInstalacoes,
+      totLimpezas,
+      totManutencaoCorretiva,
+      totInfraestrutura,
       nivel,
       bonusOperacional,
       perdeBonusOp,
@@ -119,9 +136,10 @@ function calcResultados(mesAno, getEquipes, getProducao, getQualidade, getPmoc, 
   const tecnicos = [];
   const tecSet = new Set(eq.map((e) => e.tecnico));
   for (const t of tecSet) {
-    const n = pmocPorTecnico[t] || 0;
+    const totalValor = pmocPorTecnico[t] || 0;
+    const n = pmocContratosPorTecnico[t] || 0;
     const perde = falhaTecnico.has(t);
-    const total = perde ? 0 : n * BONUS.PMOC;
+    const total = perde ? 0 : totalValor;
     tecnicos.push({ tecnico: t, contratos: n, perde, total });
   }
 
