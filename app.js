@@ -221,15 +221,19 @@ document.getElementById('form-pmoc').addEventListener('submit', (e) => {
   e.preventDefault();
   const ref = document.getElementById('pmoc-ref').value.trim();
   const tecnico = document.getElementById('pmoc-tecnico').value;
+  const aparelhos = parseInt(document.getElementById('pmoc-aparelhos').value, 10) || 0;
+  const valorPorTecnico = parseFloat(document.getElementById('pmoc-valor-tecnico').value) || 40;
   const ativo = document.getElementById('pmoc-ativo').checked;
   if (!tecnico) {
     alert('Selecione o técnico responsável.');
     return;
   }
   const arr = getPmoc();
-  arr.push({ id: genId(), ref, tecnico, ativo });
+  arr.push({ id: genId(), ref, tecnico, aparelhos, valorPorTecnico, ativo });
   setPmoc(arr);
   document.getElementById('pmoc-ref').value = '';
+  document.getElementById('pmoc-aparelhos').value = 0;
+  document.getElementById('pmoc-valor-tecnico').value = 40;
   document.getElementById('pmoc-ativo').checked = true;
   renderListas();
 });
@@ -256,12 +260,14 @@ document.getElementById('form-pmoc-falha').addEventListener('submit', (e) => {
 function renderListaPmoc() {
   const ul = document.getElementById('lista-pmoc');
   const arr = getPmoc();
-  ul.innerHTML = arr.length === 0 ? '<li class="empty">Nenhum contrato PMOC.</li>' : arr.map((p) => `
-    <li>
-      <span><strong>${p.ref}</strong> · ${p.tecnico} ${p.ativo ? '(ativo)' : '(inativo)'}</span>
+  ul.innerHTML = arr.length === 0 ? '<li class="empty">Nenhum contrato PMOC.</li>' : arr.map((p) => {
+    const aparelhos = (p.aparelhos || 0) > 0 ? ' · ' + (p.aparelhos || 0) + ' aparelhos' : '';
+    const valor = (p.valorPorTecnico != null && p.valorPorTecnico !== 40) ? ' · R$ ' + Number(p.valorPorTecnico).toFixed(2).replace('.', ',') + '/técnico' : '';
+    return `<li>
+      <span><strong>${p.ref}</strong> · ${p.tecnico} ${p.ativo ? '(ativo)' : '(inativo)'}${aparelhos}${valor}</span>
       <button type="button" class="btn-remove" data-pmoc-id="${p.id}">Remover</button>
-    </li>
-  `).join('');
+    </li>`;
+  }).join('');
   ul.querySelectorAll('.btn-remove').forEach((b) => {
     b.addEventListener('click', () => {
       setPmoc(getPmoc().filter((p) => p.id !== b.getAttribute('data-pmoc-id')));
