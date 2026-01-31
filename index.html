@@ -133,7 +133,7 @@
 
       <section id="pmoc" class="panel">
         <h2>PMOC – Responsabilidade técnica</h2>
-        <p class="hint">R$ 40/mês por contrato ativo. Falha técnica → perda do bônus PMOC do mês.</p>
+        <p class="hint">Cadastre aparelhos e o valor (R$) que o contrato vale por técnico. Falha técnica → perda do bônus PMOC do mês.</p>
         <form id="form-pmoc" class="card form-card">
           <div class="row">
             <label>
@@ -143,6 +143,14 @@
             <label>
               <span>Técnico responsável</span>
               <select id="pmoc-tecnico"></select>
+            </label>
+            <label>
+              <span>Quantidade de aparelhos</span>
+              <input type="number" id="pmoc-aparelhos" min="0" value="0" placeholder="0">
+            </label>
+            <label>
+              <span>Valor por técnico (R$)</span>
+              <input type="number" id="pmoc-valor-tecnico" min="0" step="0.01" value="40" title="Quanto este contrato vale por mês para o técnico">
             </label>
             <label class="check">
               <input type="checkbox" id="pmoc-ativo" checked>
