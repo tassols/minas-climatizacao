@@ -53,6 +53,7 @@
       html += '<div class="tv-card">';
       html += '<p class="carro">' + e.carro + ' — ' + e.tecnico + ' / ' + e.auxiliar + '</p>';
       html += '<p>Pontos: <strong>' + c.totalPontos + '</strong> (' + c.diasTrabalhados + ' dias) · Média: <strong>' + c.mediaDia.toFixed(1) + '</strong> pts/dia</p>';
+      html += '<p class="tv-servicos-equipe"><strong>' + (c.totInstalacoes || 0) + '</strong> inst. · <strong>' + (c.totLimpezas || 0) + '</strong> limpezas · <strong>' + (c.totManutencaoCorretiva || 0) + '</strong> man. corr. · <strong>' + (c.totInfraestrutura || 0) + '</strong> infr.</p>';
       html += '<p class="nivel ' + nc + '">Nível ' + c.nivel + '</p>';
       if (c.perdeBonusOp && c.motivoPerda) {
         html += '<p class="perda">Perda bônus: ' + c.motivoPerda + '</p>';
